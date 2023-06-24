@@ -1,23 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import SimpleTable from "./components/SimpleTable";
+import ColumnGroup from "./components/ColumnGroup";
+import SortingTable from "./components/SortingTable";
+import SortingFiltering from "./components/SortingFiltering";
+import GlobalFiltering from "./components/GlobalFiltering";
+import ColumnFilter from "./components/ColumnFilter";
+import ColumnFilterMore from "./components/ColumnFilterMore";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* <SimpleTable /> */}
+      {/* <ColumnGroup /> */}
+      {/* <SortingTable /> */}
+      {/* <SortingFiltering /> */}
+      {/* <GlobalFiltering /> */}
+      {/* <ColumnFilter /> */}
+      <ColumnFilterMore />
     </div>
   );
 }
