@@ -6,6 +6,8 @@ import SortingFiltering from "./components/SortingFiltering";
 import GlobalFiltering from "./components/GlobalFiltering";
 import ColumnFilter from "./components/ColumnFilter";
 import ColumnFilterMore from "./components/ColumnFilterMore";
+import PaginationTable from "./components/PaginationTable";
+import PaginationTableMore from "./components/PaginationTableMore";
 
 function App() {
   return (
@@ -16,7 +18,9 @@ function App() {
       {/* <SortingFiltering /> */}
       {/* <GlobalFiltering /> */}
       {/* <ColumnFilter /> */}
-      <ColumnFilterMore />
+      {/* <ColumnFilterMore /> */}
+      {/* <PaginationTable /> */}
+      <PaginationTableMore />
     </div>
   );
 }
