@@ -1,11 +1,11 @@
-// import "./SimpleTable.css";
+// import "./RowSelection.css";
 import FakeData from "../MockData2.json";
-import { useTable } from "react-table";
+import { useTable, useRowSelect } from "react-table";
 import { useMemo } from "react";
 import moment from "moment";
-import { usePagination } from "react-table/dist/react-table.development";
+import { Checkbox } from "./Checkbox";
 
-function PaginationTableMore() {
+function RowSelection() {
   const data = useMemo(() => FakeData, []);
   const columns = useMemo(
     () => [
@@ -58,29 +58,31 @@ function PaginationTableMore() {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    page,
+    footerGroups,
+    rows,
     prepareRow,
-    nextPage,
-    canPreviousPage,
-    canNextPage,
-    previousPage,
-    gotoPage,
-    pageCount,
-    pageOptions,
-    state,
-    setPageSize,
+    selectedFlatRows,
   } = useTable(
     {
       columns,
       data,
-      initialState: {
-        pageIndex: 2,
-      },
     },
-    usePagination
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+        {
+          id: "selection",
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            <Checkbox {...getToggleAllRowsSelectedProps()} />
+          ),
+          Cell: ({ row }) => <Checkbox {...row.getToggleRowSelectedProps()} />,
+        },
+        ...columns,
+      ]);
+    }
   );
 
-  const { pageIndex, pageSize } = state;
+  const firstPageRows = rows.slice(0, 10);
 
   return (
     <div className="SimpleTable">
@@ -98,7 +100,7 @@ function PaginationTableMore() {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {page.map((row) => {
+            {firstPageRows.map((row) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()}>
@@ -109,56 +111,32 @@ function PaginationTableMore() {
               );
             })}
           </tbody>
-        </table>
-        <div>
-          <span>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}{" "}
-            </strong>
-          </span>
-          <span>
-            {" "}
-            | Go to Page :{" "}
-            <input
-              type="number"
-              defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const pageNumber = e.target.value
-                  ? Number(e.target.value) - 1
-                  : 0;
-                gotoPage(pageNumber);
-              }}
-              style={{ width: "50px" }}
-            />
-          </span>
-          <select
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-          >
-            {[10, 25, 30].map((value) => (
-              <option value={value}>{value}</option>
+          <tfoot>
+            {footerGroups.map((footerGroup) => (
+              <tr {...footerGroup.getFooterGroupProps()}>
+                {footerGroup.headers.map((column) => (
+                  <td {...column.getFooterProps()}>
+                    {column.render("Footer")}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </select>
-          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-            {"<<"}
-          </button>
-          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-            Previous
-          </button>
-          <button onClick={() => nextPage()} disabled={!canNextPage}>
-            Next
-          </button>
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-          >
-            {">>"}
-          </button>
-        </div>
+          </tfoot>
+        </table>
+        <pre>
+          <code>
+            {JSON.stringify(
+              {
+                selectedFlatRows: selectedFlatRows.map((row) => row.original),
+              },
+              null,
+              2
+            )}
+          </code>
+        </pre>
       </div>
     </div>
   );
 }
 
-export default PaginationTableMore;
+export default RowSelection;

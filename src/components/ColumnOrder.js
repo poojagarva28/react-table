@@ -1,11 +1,10 @@
 // import "./SimpleTable.css";
 import FakeData from "../MockData2.json";
-import { useTable } from "react-table";
+import { useTable, useColumnOrder } from "react-table";
 import { useMemo } from "react";
 import moment from "moment";
-import { usePagination } from "react-table/dist/react-table.development";
 
-function PaginationTableMore() {
+function ColumnOrder() {
   const data = useMemo(() => FakeData, []);
   const columns = useMemo(
     () => [
@@ -58,33 +57,33 @@ function PaginationTableMore() {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    page,
+    footerGroups,
+    rows,
     prepareRow,
-    nextPage,
-    canPreviousPage,
-    canNextPage,
-    previousPage,
-    gotoPage,
-    pageCount,
-    pageOptions,
-    state,
-    setPageSize,
+    setColumnOrder,
   } = useTable(
     {
       columns,
       data,
-      initialState: {
-        pageIndex: 2,
-      },
     },
-    usePagination
+    useColumnOrder
   );
 
-  const { pageIndex, pageSize } = state;
+  const changeOrder = () => {
+    setColumnOrder([
+      "id",
+      "first_name",
+      "last_name",
+      "phone",
+      "country",
+      "date_of_birth",
+    ]);
+  };
 
   return (
     <div className="SimpleTable">
       <div className="container">
+        <button onClick={changeOrder}>Change column order</button>
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -98,7 +97,7 @@ function PaginationTableMore() {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {page.map((row) => {
+            {rows.map((row) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()}>
@@ -109,56 +108,21 @@ function PaginationTableMore() {
               );
             })}
           </tbody>
-        </table>
-        <div>
-          <span>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}{" "}
-            </strong>
-          </span>
-          <span>
-            {" "}
-            | Go to Page :{" "}
-            <input
-              type="number"
-              defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const pageNumber = e.target.value
-                  ? Number(e.target.value) - 1
-                  : 0;
-                gotoPage(pageNumber);
-              }}
-              style={{ width: "50px" }}
-            />
-          </span>
-          <select
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-          >
-            {[10, 25, 30].map((value) => (
-              <option value={value}>{value}</option>
+          <tfoot>
+            {footerGroups.map((footerGroup) => (
+              <tr {...footerGroup.getFooterGroupProps()}>
+                {footerGroup.headers.map((column) => (
+                  <td {...column.getFooterProps()}>
+                    {column.render("Footer")}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </select>
-          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-            {"<<"}
-          </button>
-          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-            Previous
-          </button>
-          <button onClick={() => nextPage()} disabled={!canNextPage}>
-            Next
-          </button>
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-          >
-            {">>"}
-          </button>
-        </div>
+          </tfoot>
+        </table>
       </div>
     </div>
   );
 }
 
-export default PaginationTableMore;
+export default ColumnOrder;
